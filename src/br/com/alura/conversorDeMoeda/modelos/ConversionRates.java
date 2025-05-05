@@ -4,8 +4,11 @@ public class ConversionRates {
     private double USD;
     private double EUR;
     private double BRL;
+   // boliviano boliviana
     private double BOB;
+    //dolar canadense
     private double CAD;
+    //peso chinelo
     private double CLP;
 
 

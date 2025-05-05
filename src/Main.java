@@ -1,37 +1,80 @@
-import br.com.alura.conversorDeMoeda.modelos.ApiReponse;
-import br.com.alura.conversorDeMoeda.modelos.ConecaoAPI;
-import br.com.alura.conversorDeMoeda.modelos.ConversionRates;
-
-import java.sql.SQLOutput;
+import br.com.alura.conversorDeMoeda.Telas.MenuOpcoes;
+import br.com.alura.conversorDeMoeda.Telas.TelasMenu;
+import br.com.alura.conversorDeMoeda.calculos.CalculoConversao;
 import java.util.Scanner;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+
 public class Main {
     public static void main(String[] args) {
-        String digitado;
+        String moedaPrincipal = "";
+        String moedaConversao = "";
+        double valorDeCotacao = 0;
+        boolean sair = false;
+        int operacao = 0;
 
         Scanner scanner = new Scanner(System.in);
-        System.out.println("**********************************");
-        System.out.println("LOCALIZADOR DE CIDADES POR CEP!");
-        System.out.println("digite uma moeda:");
-        digitado = scanner.nextLine();
-
+        TelasMenu telas = new TelasMenu();
+        MenuOpcoes menu = new MenuOpcoes();
         try {
-            ConecaoAPI busca = new ConecaoAPI();
-            String key = busca.getKey();
-            String endereco = "https://v6.exchangerate-api.com/v6/"+key+"/latest/"+digitado;
+            while (operacao != 7) {
+
+                telas.getTelaInicial();
+
+                int opcao = scanner.nextInt();
+
+                if (opcao < 1 || opcao > 7) {
+                    System.out.println("Opção Inválida! Digite uma opção válida.");
+                } else if (opcao == 7) {
+                    System.out.println("""
+                            *************************************************
+                            Obrigado por utilizar nosso Sistema!
+                            *************************************************
+                            """);
+                    break;
+                } else if (opcao instanceof Integer) {
+                    System.out.println("Opção Inválida! Digite uma opção válida.");
+
+                } else {
+                    while (sair == false) {
+                        moedaPrincipal = menu.menuPrincipalRetorno(opcao);
+                        telas.getMoedaDeConversao();
+                        int opcao2 = scanner.nextInt();
+
+                        if (opcao2 < 1 || opcao2 > 6) {
+                            System.out.println("Opção Inválida! Digite uma opção válida.");
+                        } else {
+                            moedaConversao = menu.menuPrincipalRetorno(opcao2);
+                            sair = true;
+                        }
+                    }
+                }
 
 
-            ApiReponse teste = busca.buscaJson(endereco);
-            ConversionRates rates = teste.getConversion_rates();
+                System.out.println("digite o valor para realizar a cotacao:");
+                valorDeCotacao = scanner.nextDouble();
+                CalculoConversao calculo = new CalculoConversao();
+                double finalValor;
+                finalValor = calculo.conversao(moedaPrincipal, moedaConversao, valorDeCotacao);
 
-
-        } catch (RuntimeException e) {
+                System.out.println("""
+                        *************************************************
+                        O valor de %s em %s
+                        Corresponde a:
+                        %s %s
+                        *************************************************
+                        """.formatted(valorDeCotacao, moedaPrincipal, finalValor, moedaConversao));
+            }
+        } catch (RuntimeException  e) {
             System.out.println(e.getMessage());
-            System.out.println("Nao deu certo!!");
+            System.out.println("""
+                *************************************************
+                Ocorreu um erro na execução do Programa!
+                Entre em contato com o suporte.
+                *************************************************
+                """);
         }
     }
 }
+
 
 
